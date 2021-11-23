@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="fetch-employeesFlow" doc:id="df7a8689-ccc1-4795-b873-c5ac84d3801e" >
+		<http:listener doc:name="Listener" doc:id="efc9612c-d874-43d1-a812-c01a9c098e6f" config-ref="HTTP_Listener_config" path="fetch-employees"/>
+		<logger level="INFO" doc:name="Logger" doc:id="75303876-f9e8-4361-9a50-9d42afbffd02" message="start log"/>
+		<db:select doc:name="Select" doc:id="a225092d-d053-4ac0-95da-45c12b5e185d" config-ref="Database_Config">
+			<db:sql ><![CDATA[select emp_id, emp_name,emp_status from emp where emp_id=:emp_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	"emp_id" : attributes.queryParams.empid
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="68b0f0b6-550f-43d3-8915-0e8f8e6392a1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+if(sizeOf(payload)>0)
+ {
+	empId: payload.EMP_ID default 0,
+	empName: payload.EMP_NAME default "",
+	empstatus: payload.EMP_STATUS default ""
+} 
+else{
+	"Message": "employee not found"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4bad49fb-57b9-441a-a4b2-09f837202a50" message='"correaltionid" #correlationId'/>
+	</flow>
+</mule>
