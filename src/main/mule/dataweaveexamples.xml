@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="dataweaveexamplesFlow" doc:id="2e7d14ba-30fb-47d9-9d11-a4e925810b82" >
+		<ee:transform doc:name="Transform Message" doc:id="ac17c261-c81f-42dd-ad97-94fed932ffda" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+var payload=readUrl("classpath://dataweaveexamples.xml", "application/xml")
+---
+payload..]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dataweaveexamplesFlow1" doc:id="e3781c72-8826-4625-b790-bde6ce356e9c" >
+		<batch:job jobName="dataweaveexamplesBatch_Job" doc:id="d1d2f280-7311-40ba-972f-2657da30efbe" >
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="2b079b6e-5e75-4d68-a1c5-a105851efea5" />
+			</batch:process-records>
+		</batch:job>
+	</flow>
+	<flow name="dataweaveexamplesFlow2" doc:id="a0b19d3b-f26f-4aad-9f75-f69d676e7d8f" >
+		<http:request method="GET" doc:name="Request" doc:id="c31b08f7-5781-4361-895e-f3917238ce3c" />
+	</flow>
+</mule>
