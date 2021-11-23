@@ -21,7 +21,7 @@ output application/json
 ---
 {
 	"status":200,
-	"Message":" Delete Employee Success"
+	"Message":" Deleted Employee Successfully"
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
